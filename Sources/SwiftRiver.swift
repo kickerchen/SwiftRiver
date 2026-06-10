@@ -9,18 +9,11 @@ import Observation
 // MARK: - ProviderKey
 
 public struct ProviderKey: Hashable, CustomStringConvertible {
-    private let id: ObjectIdentifier
+    let id: UUID
     private let label: String
 
-    init<T>(_ type: T.Type, label: String) {
-        self.id = ObjectIdentifier(type as AnyObject.Type)
-        self.label = label
-    }
-
-    // Stable key per instance — allows multiple providers of same type
     static func unique(label: String) -> ProviderKey {
-        final class Token {}
-        return ProviderKey(Token.self, label: label)
+        ProviderKey(id: UUID(), label: label)
     }
 
     public var description: String { "Provider<\(label)>" }
