@@ -16,12 +16,12 @@ let package = Package(
     targets: [
         .target(
             name: "SwiftRiver",
-            path: "Sources/SwiftRiver"
+            path: "Sources"
         ),
         .testTarget(
             name: "SwiftRiverTests",
             dependencies: ["SwiftRiver"],
-            path: "Tests/SwiftRiverTests"
+            path: "Tests"
         ),
     ]
 )
