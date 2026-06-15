@@ -10,7 +10,7 @@ A lightweight, Riverpod-inspired dependency injection and state management frame
 
 ## Why I Built This
 
-Most state management solutions for Swift either:
+Many state management solutions for Swift either:
 
 - Wrap `@Published` / `ObservableObject` with thin abstractions — inheriting all of Combine's thread-safety ambiguities, or
 - Port patterns from other ecosystems without embracing what Swift's actor model actually offers
@@ -200,7 +200,7 @@ ProviderScope(observers: [LoggingObserver()]) { ... }
 | Learning curve | Low–Medium | High | Medium |
 | Production ready | ❌ Not yet | ✅ Yes | ✅ Yes |
 
-> TCA is battle-tested and excellent. SwiftRiver explores a smaller, more direct surface area — fewer concepts, same concurrency guarantees.
+> TCA is battle-tested and excellent. SwiftRiver explores a smaller, more direct surface area — fewer concepts, with Swift Concurrency as the primary isolation primitive.
 
 ---
 
@@ -216,7 +216,7 @@ ProviderScope(observers: [LoggingObserver()]) { ... }
 
 ## Motivation & Background
 
-I've been building mobile apps professionally across Flutter and native Swift/iOS. After working extensively with Riverpod on the Flutter side, I became curious whether its core idea — providers as lazy, composable, auto-disposable dependency declarations — could be expressed idiomatically in Swift using actors rather than Dart's zone system.
+After spending time with Riverpod on the Flutter side, I became curious whether its core idea — providers as lazy, composable, auto-disposable dependency declarations — could be expressed idiomatically in Swift using actors rather than Dart's zone system.
 
 This project is as much an exploration of **Swift Concurrency correctness** as it is a usable framework. If the design thinking interests you, open a Discussion.
 

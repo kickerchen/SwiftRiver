@@ -58,12 +58,12 @@ final class ProviderNode {
 
 ```swift
 public struct ProviderKey: Hashable {
-    private let id: ObjectIdentifier
+    let id: UUID
     private let label: String
 }
 ```
 
-Keys are created via `.unique(label:)`, which allocates a private `Token` class per call-site. `ObjectIdentifier` of that `Token.Type` gives a stable, unique identity across the program's lifetime — without requiring the user to manually assign string identifiers. Multiple providers of the same value type are distinguished by their key, not their generic parameter.
+Keys are created via `.unique(label:)`, which generates a fresh `UUID` per call-site. The UUID provides a stable, unique identity for the lifetime of the process — without requiring the user to manually assign string identifiers. Multiple providers of the same value type are distinguished by their key, not their generic parameter.
 
 ---
 
@@ -279,7 +279,7 @@ Providers marked `keepAlive: true` are exempt from autoDispose — useful for sh
 
 These design decisions are not yet settled:
 
-1. **`ProviderKey` identity** — The current `Token`-class approach is convenient but fragile across module boundaries. A macro-generated stable key is being explored.
+1. **`ProviderKey` persistence** — Keys are UUID-based and stable for the lifetime of the process, but not across restarts. For most DI use cases this is fine, but serializing or persisting provider keys would require a different approach (e.g. stable string identifiers or a macro-generated constant).
 
 2. **Scoped containers** — How should a child `ProviderContainer` interact with its parent's cache? Copy-on-write, delegation, and full isolation are all viable options with different tradeoffs.
 
