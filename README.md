@@ -1,6 +1,6 @@
 # SwiftRiver 🌊
 
-A lightweight, Riverpod-inspired dependency injection and state management framework for Swift — built on **`actor`-isolated graph**, **`@Observable`**, and **Swift Concurrency** from the ground up.
+A lightweight dependency injection & state management framework for Swift, inspired by Riverpod.
 
 > ⚠️ **Current Status**: Core architecture is implemented and functional. Not yet recommended for production use. Feedback and contributions welcome.
 
@@ -8,18 +8,50 @@ A lightweight, Riverpod-inspired dependency injection and state management frame
 
 ---
 
-## Why I Built This
+## Introduction
 
-Many state management solutions for Swift either:
+SwiftRiver lets you declare dependencies and state as **providers** — lazy, composable units that SwiftUI reads and re-renders from automatically. A `Provider` describes how to build a value; `ref.watch()` wires up dependencies between providers without you managing lifecycles by hand.
+
+What you get out of the box:
+
+- **Dependency injection** without a service locator or manual wiring — providers declare what they need, and the graph resolves it.
+- **Sync, mutable, and async state** through `Provider`, `Provider.state()`, and `AsyncProvider`, each backed by `@Observable` so SwiftUI updates automatically.
+- **Automatic cleanup** — `autoDispose` cascades through the dependency graph, so unused providers (and their now-unused dependencies) are released without manual bookkeeping.
+- **Thread-safety by construction** — the entire provider graph lives inside a single `actor`, so there are no locks, no `DispatchQueue`, and no data races to reason about.
+- **Native SwiftUI integration** via `ProviderScope` and `@Environment`, plus an observer hook for logging and debugging.
+
+If you've used Riverpod in Flutter, the shape will feel familiar — providers, `ref.watch()`, `autoDispose` — reimagined around Swift's actor model instead of Dart's zones.
+
+---
+
+## Comparison
+
+| | SwiftRiver | TCA | Riverpod (Flutter) |
+|---|---|---|---|
+| Language | Swift | Swift | Dart |
+| Graph isolation | `actor` | Swift Concurrency | Dart isolates |
+| UI reactivity | `@Observable` | `@ObservableState` | `ref.watch()` |
+| Async state | `AsyncState<T>` enum | `Effect` | `AsyncNotifier` |
+| autoDispose | ✅ | ❌ | ✅ |
+| Learning curve | Low–Medium | High | Medium |
+| Production ready | ❌ Not yet | ✅ Yes | ✅ Yes |
+
+> TCA is battle-tested and excellent. SwiftRiver explores a smaller, more direct surface area — fewer concepts, with Swift Concurrency as the primary isolation primitive.
+
+---
+
+## Why it's called SwiftRiver
+
+The name is a nod to [Riverpod](https://riverpod.dev), the Flutter state-management library. After spending time with Riverpod on the Flutter side, I got curious whether its core idea — providers as lazy, composable, auto-disposable dependency declarations — could be expressed idiomatically in Swift, using actors rather than Dart's zone system.
+
+Most Swift state-management approaches either:
 
 - Wrap `@Published` / `ObservableObject` with thin abstractions — inheriting all of Combine's thread-safety ambiguities, or
-- Port patterns from other ecosystems without embracing what Swift's actor model actually offers
-
-I wanted to explore what dependency injection looks like when you treat **the actor as the unit of isolation** — not a lock, not a queue, but a first-class Swift concurrency primitive.
+- Port patterns from other ecosystems without embracing what Swift's actor model actually offers.
 
 The specific question I kept asking: *what does Riverpod's provider graph look like if the graph itself is an `actor`, and synchronous dependency reads inside factories use `assumeIsolated` to assert — rather than hope — that isolation is already held?*
 
-SwiftRiver is my answer to that question.
+SwiftRiver is my answer to that question, and this project is as much an exploration of **Swift Concurrency correctness** as it is a usable framework. If the design thinking interests you, open a Discussion.
 
 ---
 
@@ -188,22 +220,6 @@ ProviderScope(observers: [LoggingObserver()]) { ... }
 
 ---
 
-## Comparison
-
-| | SwiftRiver | TCA | Riverpod (Flutter) |
-|---|---|---|---|
-| Language | Swift | Swift | Dart |
-| Graph isolation | `actor` | Swift Concurrency | Dart isolates |
-| UI reactivity | `@Observable` | `@ObservableState` | `ref.watch()` |
-| Async state | `AsyncState<T>` enum | `Effect` | `AsyncNotifier` |
-| autoDispose | ✅ | ❌ | ✅ |
-| Learning curve | Low–Medium | High | Medium |
-| Production ready | ❌ Not yet | ✅ Yes | ✅ Yes |
-
-> TCA is battle-tested and excellent. SwiftRiver explores a smaller, more direct surface area — fewer concepts, with Swift Concurrency as the primary isolation primitive.
-
----
-
 ## Roadmap
 
 - [ ] Scoped `ProviderContainer` (child containers for feature modules)
@@ -211,14 +227,6 @@ ProviderScope(observers: [LoggingObserver()]) { ... }
 - [ ] `@River` macro to reduce declaration boilerplate
 - [ ] Full test suite
 - [ ] Documentation site
-
----
-
-## Motivation & Background
-
-After spending time with Riverpod on the Flutter side, I became curious whether its core idea — providers as lazy, composable, auto-disposable dependency declarations — could be expressed idiomatically in Swift using actors rather than Dart's zone system.
-
-This project is as much an exploration of **Swift Concurrency correctness** as it is a usable framework. If the design thinking interests you, open a Discussion.
 
 ---
 
